@@ -14,7 +14,7 @@ struct Card: Identifiable {
     var position: CGPoint
     var color: PaletteColor = .neutral
     var title: String
-//    var subtitle: String
+    var subtitle: String?
 //    var file: FileDocument?
 //    var video: Videofile?
 //    var audio: AudioFile?
