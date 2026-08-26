@@ -9,11 +9,8 @@ import SwiftUI
 
 struct BoardView: View {
     // MARK: - Properties
-    let cards: [Card] = [
-        Card(position: CGPoint(x: 180, y: 160), color: .blue,  title: "Глава 1 — Завязка", subtitle: "Мара находит письмо"),
-        Card(position: CGPoint(x: 430, y: 300), color: .green, title: "Герой — Мара"),
-        Card(position: CGPoint(x: 260, y: 460), color: .purple, title: "Сцены"),
-    ]
+    @State private var viewModel = BoardViewModel()
+    @State private var dragStart: CGPoint?
     
     // MARK: - Body
     var body: some View {
@@ -43,9 +40,25 @@ struct BoardView: View {
             }
             
             // MARK: - Mock Cards
-            ForEach(cards) { card in
+            ForEach(viewModel.cards) { card in
                 CardView(card: card)
                     .position(card.position)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                let start = dragStart ?? card.position
+                                dragStart = start
+                                
+                                let newPosition = CGPoint(
+                                    x: start.x + value.translation.width,
+                                    y: start.y + value.translation.height
+                                )
+                                viewModel.move(card, to: newPosition)
+                            }
+                            .onEnded { _ in
+                                dragStart = nil
+                            }
+                    )
             }
         }
     }
